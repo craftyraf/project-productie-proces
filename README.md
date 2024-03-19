@@ -24,7 +24,7 @@
 - In case something isn't clear: contact us via email.
 
 ### You can ignore the folder '.idea'
-- I used Pycharm to program, and Pycharm created this folder.
+- Some of us used Pycharm to program, and Pycharm created this folder.
 
 We are happy to receive your feedback!
 
