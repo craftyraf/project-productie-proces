@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
-def horizontal_bar_chart(df, column_name, chart_title, x_label, y_label):
+
+def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     """
     Create a horizontal bar chart for the specified column in the DataFrame, with customizable title and labels.
 
@@ -11,8 +12,6 @@ def horizontal_bar_chart(df, column_name, chart_title, x_label, y_label):
     - x_label: string, the label for the x-axis.
     - y_label: string, the label for the y-axis.
     """
-    # Count the number of vehicles, sorted from low to high
-    value_counts = df[column_name].value_counts(ascending=True)
 
     # Set up the figure size
     plt.figure(figsize=(10, 6))
