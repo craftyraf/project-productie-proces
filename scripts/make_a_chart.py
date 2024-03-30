@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
@@ -33,3 +34,12 @@ def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
 
     # Display the plot
     plt.show()
+
+
+# Berekening van ECDF
+def ecdf(data):
+    """Bereken ECDF voor een 1D array van data."""
+    n = len(data)
+    x = np.sort(data)
+    y = np.arange(1, n + 1) / n
+    return x, y
