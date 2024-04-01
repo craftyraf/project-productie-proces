@@ -109,6 +109,8 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
     plt.ylabel('Dichtheid')
     plt.legend()
 
+    return xmin, xmax
+
 
 def generate_normal_distribution(segment_data, location, threshold_2, maximum, chart_color):
     """
