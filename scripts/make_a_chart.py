@@ -46,6 +46,31 @@ def ecdf(data):
     return x, y
 
 
+def calculate_maximum(combined_df_cleaned, location):
+    """
+    Calculate the maximum value for the x-axis based on production data for a specified location.
+
+    Parameters:
+        combined_df_cleaned (DataFrame): Combined DataFrame containing production data.
+        location (str): The location for which the maximum value is to be calculated.
+
+    Returns:
+        int: The maximum value for the x-axis.
+    """
+    # Extract the relevant data for the specified location
+    location_data = combined_df_cleaned[combined_df_cleaned['location'] == location]
+
+    # Find the maximum production value for the specified location
+    max_production = location_data['production'].max()
+
+    # Calculate the maximum value for the x-axis, ensuring it's a multiple of 50 and adding a 5% buffer
+    maximum_unrounded = max_production / 50 * 1.05
+    maximum_rounded = np.ceil(maximum_unrounded)
+    maximum = int(maximum_rounded * 50)
+
+    return maximum
+
+
 def generate_point_distribution(segment_data, location, threshold_1, maximum):
     """
     Plot de puntverdeling voor een segment.
@@ -65,7 +90,7 @@ def generate_point_distribution(segment_data, location, threshold_1, maximum):
     # Plot histogram
     xmin, xmax = plt.xlim()
     plt.xlim(xmin=0, xmax=maximum)
-    plt.hist(segment_data, bins=1, density=True, alpha=0.6, color='g', width=width)
+    plt.hist(segment_data, bins=1, density=True, alpha=0.6, width=width)
 
     # Set plot title and labels
     plt.title(f"{location} Productie < {threshold_1} (Puntwaarde)")
@@ -85,13 +110,18 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
         maximum (int): Maximale waarde voor de x-as.
 
     Returns:
-        None
+        lower_bound (float): Lower bound of the uniform distribution.
+        upper_bound (float): Upper bound of the uniform distribution.
     """
+    # Calculate lower and upper bounds
+    lower_bound = segment_data.min()
+    upper_bound = segment_data.max()
+
     # Fit uniform distribution to the segment data
     mean_norm, std_norm = stats.uniform.fit(segment_data)
 
     # Plot histogram
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
 
     # Set x-axis limits
     xmin, xmax = plt.xlim()
@@ -110,7 +140,7 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
     plt.ylabel('Dichtheid')
     plt.legend()
 
-    return xmin, xmax
+    return lower_bound, upper_bound
 
 
 def generate_normal_distribution(segment_data, location, threshold_2, maximum):
@@ -129,7 +159,7 @@ def generate_normal_distribution(segment_data, location, threshold_2, maximum):
     mean_norm, std_norm = stats.norm.fit(segment_data)
 
     # Histogram plot voor het segment
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
 
     # Stel x-as limieten in
     xmin, xmax = plt.xlim()
@@ -165,7 +195,7 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
     loc, scale = cauchy.fit(segment_data)
 
     # Histogram plot voor de segmentgegevens
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
 
     # Bepaal de x-limieten van de plot
     xmin, xmax = plt.xlim()
@@ -188,7 +218,7 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
 
 
 def plot_segment_distributions(segment_1, distribution_1, segment_2, distribution_2, segment_3, distribution_3,
-                               location, threshold_1, threshold_2, combined_df_cleaned):
+                               location, threshold_1, threshold_2, combined_df_cleaned, maximum):
     """
     Plot distributiesegmenten voor een bepaalde locatie.
 
@@ -204,11 +234,6 @@ def plot_segment_distributions(segment_1, distribution_1, segment_2, distributio
         verdeling_2 (callable): Functie voor het genereren van distributie in segment 2.
         verdeling_3 (callable): Functie voor het genereren van distributie in segment 3.
     """
-
-    # Bepaal xmax als het maximum van de productie van de desbetreffende locatie
-    # afgerond naar boven naar het dichtstbijzijnde veelvoud van 50, met een marge van 5%.
-    maximum = int(np.ceil(combined_df_cleaned[combined_df_cleaned['location'] == location]['production'].max() / 50 *
-                          1.05)* 50)
 
     # Maak een grafiek voor elk segment
     plt.subplots(1, 3, figsize=(25, 4), gridspec_kw={'width_ratios': [4, 4, 4]})
