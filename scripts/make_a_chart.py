@@ -46,7 +46,7 @@ def ecdf(data):
     return x, y
 
 
-def generate_point_distribution(segment_data, location, threshold_1, maximum, chart_color):
+def generate_point_distribution(segment_data, location, threshold_1, maximum):
     """
     Plot de puntverdeling voor een segment.
 
@@ -63,8 +63,9 @@ def generate_point_distribution(segment_data, location, threshold_1, maximum, ch
     width = maximum / 25
 
     # Plot histogram
+    xmin, xmax = plt.xlim()
     plt.xlim(xmin=0, xmax=maximum)
-    plt.hist(segment_data, bins=1, density=True, alpha=0.6, color=chart_color, width=width)
+    plt.hist(segment_data, bins=1, density=True, alpha=0.6, color='g', width=width)
 
     # Set plot title and labels
     plt.title(f"{location} Productie < {threshold_1} (Puntwaarde)")
@@ -72,7 +73,7 @@ def generate_point_distribution(segment_data, location, threshold_1, maximum, ch
     plt.ylabel('Dichtheid')
 
 
-def generate_uniform_distribution(segment_data, location, threshold_1, threshold_2, maximum, chart_color):
+def generate_uniform_distribution(segment_data, location, threshold_1, threshold_2, maximum):
     """
     Plot de uniforme verdeling voor een segment.
 
@@ -90,7 +91,7 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
     mean_norm, std_norm = stats.uniform.fit(segment_data)
 
     # Plot histogram
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color=chart_color, label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
 
     # Set x-axis limits
     xmin, xmax = plt.xlim()
@@ -112,7 +113,7 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
     return xmin, xmax
 
 
-def generate_normal_distribution(segment_data, location, threshold_2, maximum, chart_color):
+def generate_normal_distribution(segment_data, location, threshold_2, maximum):
     """
     Genereer de normale verdeling voor een segment.
 
@@ -128,11 +129,11 @@ def generate_normal_distribution(segment_data, location, threshold_2, maximum, c
     mean_norm, std_norm = stats.norm.fit(segment_data)
 
     # Histogram plot voor het segment
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color=chart_color, label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
 
     # Stel x-as limieten in
-    xmin = 0
-    xmax = maximum
+    xmin, xmax = plt.xlim()
+    plt.xlim(xmin=0, xmax=maximum)
 
     # Genereer punten voor de normale verdeling
     x_norm = np.linspace(xmin, xmax, 100)
@@ -147,8 +148,10 @@ def generate_normal_distribution(segment_data, location, threshold_2, maximum, c
     plt.ylabel('Dichtheid')
     plt.legend()
 
+    return mean_norm, std_norm
 
-def generate_cauchy_distribution(segment_data, location, threshold_2, maximum, chart_color):
+
+def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
     """
     Genereer de Cauchy-verdeling voor een segment.
 
@@ -162,11 +165,11 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum, c
     loc, scale = cauchy.fit(segment_data)
 
     # Histogram plot voor de segmentgegevens
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color=chart_color, label='Histogram')
+    plt.hist(segment_data, bins=50, density=True, alpha=0.6, color='g', label='Histogram')
 
     # Bepaal de x-limieten van de plot
-    xmin = 0
-    xmax = maximum
+    xmin, xmax = plt.xlim()
+    plt.xlim(xmin=0, xmax=maximum)
 
     # Genereer punten voor de Cauchy-verdeling
     x = np.linspace(xmin, xmax, 100)
@@ -181,9 +184,8 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum, c
     plt.ylabel('Dichtheid')
     plt.legend()
 
+    return loc, scale
 
-import numpy as np
-import matplotlib.pyplot as plt
 
 def plot_segment_distributions(segment_1, distribution_1, segment_2, distribution_2, segment_3, distribution_3,
                                location, threshold_1, threshold_2, combined_df_cleaned):
@@ -204,23 +206,24 @@ def plot_segment_distributions(segment_1, distribution_1, segment_2, distributio
     """
 
     # Bepaal xmax als het maximum van de productie van de desbetreffende locatie
-    # afgerond naar boven naar het dichtstbijzijnde veelvoud van 50, vermeerderd met 100.
-    maximum = int(np.ceil(combined_df_cleaned[combined_df_cleaned['location'] == location]['production'].max() / 50) * 50) + 100
+    # afgerond naar boven naar het dichtstbijzijnde veelvoud van 50, met een marge van 5%.
+    maximum = int(np.ceil(combined_df_cleaned[combined_df_cleaned['location'] == location]['production'].max() / 50 *
+                          1.05)* 50)
 
     # Maak een grafiek voor elk segment
     plt.subplots(1, 3, figsize=(25, 4), gridspec_kw={'width_ratios': [4, 4, 4]})
 
     # Segment 1
     plt.subplot(1, 3, 1)
-    distribution_1(segment_1['production'], location, threshold_1, maximum, "green")
+    distribution_1(segment_1['production'], location, threshold_1, maximum)
 
     # Segment 2
     plt.subplot(1, 3, 2)
-    distribution_2(segment_2['production'], location, threshold_1, threshold_2, maximum, "green")
+    distribution_2(segment_2['production'], location, threshold_1, threshold_2, maximum)
 
     # Segment 3
     plt.subplot(1, 3, 3)
-    distribution_3(segment_3['production'], location, threshold_2, maximum, "green")
+    distribution_3(segment_3['production'], location, threshold_2, maximum)
 
     # Toon het geheel
     plt.subplots_adjust(wspace=0.2)
