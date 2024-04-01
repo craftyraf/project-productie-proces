@@ -179,6 +179,44 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum, c
     plt.ylabel('Dichtheid')
     plt.legend()
 
+
+def plot_segment_distributions(segment_1, segment_2, segment_3, location, threshold_1, threshold_2, combined_df_cleaned):
+    """
+    Plot distribution segments for a given location.
+
+    Parameters:
+        segment_1 (DataFrame): DataFrame containing data for segment 1.
+        segment_2 (DataFrame): DataFrame containing data for segment 2.
+        segment_3 (DataFrame): DataFrame containing data for segment 3.
+        location (str): The location for which distributions are plotted.
+        threshold_1 (float): Threshold value between segments 1 and 2.
+        threshold_2 (float): Threshold value between segments 2 and 3.
+        combined_df_cleaned (DataFrame): DataFrame containing all cleaned data.
+    """
+
+    # Determine xmax as the maximum production of the respective location
+    # rounded up to the nearest multiple of 50, increased by 100.
+    maximum = int(np.ceil(combined_df_cleaned[combined_df_cleaned['location'] == location]['production'].max() / 50) * 50) + 100
+
+    # Create a graph for each segment
+    plt.subplots(1, 3, figsize=(25, 4), gridspec_kw={'width_ratios': [4, 4, 4]})
+
+    # Segment 1
+    plt.subplot(1, 3, 1)
+    generate_point_distribution(segment_1['production'], location, threshold_1, maximum, "green")
+
+    # Segment 2
+    plt.subplot(1, 3, 2)
+    generate_uniform_distribution(segment_2['production'], location, threshold_1, threshold_2, maximum, "green")
+
+    # Segment 3
+    plt.subplot(1, 3, 3)
+    generate_normal_distribution(segment_3['production'], location, threshold_2, maximum, "green")
+
+    plt.subplots_adjust(wspace=0.2)
+    plt.show()
+
+
 def line_chart_daily_production(data, location, chart_title):
     plt.plot(data, marker='o')
     plt.title(f"{location} {chart_title}")
