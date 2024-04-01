@@ -37,9 +37,4 @@ def create_segments(location, threshold_1, threshold_2, df):
     share_2 = round((len(segment_2) * 100) / total_days_location, 2)
     share_3 = round((len(segment_3) * 100) / total_days_location, 2)
 
-    # Print shares
-    print(f"{location}: % dagen met [productie < {threshold_1}]:", share_1, '%')
-    print(f"{location}: % dagen met [{threshold_1} <= productie < {threshold_2}]:", share_2, '%')
-    print(f"{location}: % dagen met [productie >= {threshold_2}]:", share_3, '%')
-
-    return share_1, share_2, share_3, segment_1, segment_2, segment_3, location, threshold_1, threshold_2
+    return share_1, share_2, share_3, segment_1, segment_2, segment_3
