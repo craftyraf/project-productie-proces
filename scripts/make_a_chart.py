@@ -178,3 +178,11 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum, c
     plt.xlabel('Productie')
     plt.ylabel('Dichtheid')
     plt.legend()
+
+def line_chart_daily_production(data, location, chart_title):
+    plt.plot(data, marker='o')
+    plt.title(f"{location} {chart_title}")
+    plt.xlabel('Dag')
+    plt.ylabel('Productie')
+    plt.grid(True)
+    plt.show()
