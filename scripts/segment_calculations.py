@@ -37,9 +37,9 @@ def create_segments(location, threshold_1, threshold_2, df):
     total_days_location = len(df[df['location'] == location])
 
     # Calculate shares
-    share_1 = round((len(segment_1) * 100) / total_days_location, 2)
-    share_2 = round((len(segment_2) * 100) / total_days_location, 2)
-    share_3 = round((len(segment_3) * 100) / total_days_location, 2)
+    share_1 = round(len(segment_1) / total_days_location, 4)
+    share_2 = round(len(segment_2) / total_days_location, 4)
+    share_3 = round(len(segment_3) / total_days_location, 4)
 
     return share_1, share_2, share_3, segment_1, segment_2, segment_3
 
@@ -59,9 +59,9 @@ def print_segment_share(location, threshold_1, threshold_2, share_1, share_2, sh
     Returns:
         None
     """
-    print(f"{location}: % dagen met [productie < {threshold_1}]:", share_1, '%')
-    print(f"{location}: % dagen met [{threshold_1} <= productie < {threshold_2}]:", share_2, '%')
-    print(f"{location}: % dagen met [productie >= {threshold_2}]:", share_3, '%')
+    print(f"{location}: % dagen met [productie < {threshold_1}]:", round(100 * share_1,2), '%')
+    print(f"{location}: % dagen met [{threshold_1} <= productie < {threshold_2}]:", round(100 * share_2,2), '%')
+    print(f"{location}: % dagen met [productie >= {threshold_2}]:", round(100 * share_3,2), '%')
 
 
 def calculate_and_save_segments_values(location, threshold_1, threshold_2, share_1, segment_2, segment_3,
@@ -95,9 +95,9 @@ def calculate_and_save_segments_values(location, threshold_1, threshold_2, share
     results[location] = {
         'threshold_1': threshold_1,
         'threshold_2': threshold_2,
-        'share_1': round(share_1 / 100,4),
-        'share_2': round(share_2 / 100,4),
-        'share_3': round(share_3 / 100,4),
+        'share_1': share_1,
+        'share_2': share_2,
+        'share_3': share_3,
         'lower_bound_s2': lower_bound_s2,
         'upper_bound_s2': upper_bound_s2,
         'distribution': distribution,

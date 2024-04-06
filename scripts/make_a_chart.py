@@ -243,10 +243,10 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
 
 def plot_histogram(ax, simulated_data, n_days, location):
     # Compute num_values
-    num_values = round(10 ** 4 / np.sqrt(n_days)) * 10 ** 3
+    num_values = round(10 ** 6 / np.sqrt(n_days)) * 10 ** 3
 
-    # Calculate the number of bins
-    num_bins = int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10)))
+    # Calculate the number of bins (bepaald via trial & error)
+    num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
 
     ax.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
     ax.set_xlabel(f"Productie voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
@@ -254,6 +254,25 @@ def plot_histogram(ax, simulated_data, n_days, location):
     ax.set_title(
         f"Density plot van ca. $10^{int(np.floor(np.log10(num_values)))}$ random\n waarden voor {location} ({n_days}"
         f" {'dag' if n_days == 1 else 'dagen'})")
+
+
+def plot_cdf(ax, simulated_data, n_days, location):
+    # Sorteer dataset
+    sorted_data = np.sort(simulated_data)
+
+    # Bereken y-waarden
+    n = len(simulated_data)
+    y_values = np.arange(1, n + 1) / n
+
+    # Plot the CDF
+    ax.plot(sorted_data, y_values, label=f"Empirische Cumulatieve Distributiefunctie ({n_days}"
+                                         f" {'dag' if n_days == 1 else 'dagen'})")
+
+    # Set labels and title
+    ax.set_xlabel(f"Productie voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
+    ax.set_ylabel('Cumulatieve kans')
+    ax.set_title(f"Cumulatieve kans voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
+    ax.legend()
 
 
 def line_chart_daily_production(data, location, chart_title):

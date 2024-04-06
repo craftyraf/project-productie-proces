@@ -1,1 +1,1 @@
-{"STO": {"threshold_1": 1e-08, "threshold_2": 150, "share_1": 0.0734, "share_2": 0.0962, "share_3": 0.8304, "lower_bound_s2": 14, "upper_bound_s2": 148, "distribution": "cauchy", "param1_s3": 204.72978882102876, "param2_s3": 8.540370230127948}}
+{"STO": {"threshold_1": 1e-08, "threshold_2": 150, "share_1": 0.0734, "share_2": 0.0962, "share_3": 0.8304, "lower_bound_s2": 14, "upper_bound_s2": 148, "distribution": "normal", "param1_s3": 202.8940350877193, "param2_s3": 15.599032792738923}}
