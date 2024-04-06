@@ -1,7 +1,10 @@
 import random
 import numpy as np
 
-def simulate(share_1, share_2, lower_bound, upper_bound, mean, stdev, num_values, n_days):
+def simulate(share_1, share_2, lower_bound, upper_bound, mean, stdev, n_days):
+
+    num_values = round(10 ** 6 / np.sqrt(n_days))
+
     all_random_sums = []
     for _ in range(num_values):
         random_sum = 0

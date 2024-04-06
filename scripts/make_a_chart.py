@@ -71,7 +71,7 @@ def calculate_maximum(combined_df_cleaned, location):
     return maximum
 
 
-def generate_point_distribution(segment_data, location, threshold_1, maximum):
+def generate_plot_point_distribution(segment_data, location, threshold_1, maximum):
     """
     Plot de puntverdeling voor een segment.
 
@@ -98,7 +98,7 @@ def generate_point_distribution(segment_data, location, threshold_1, maximum):
     plt.ylabel('Dichtheid')
 
 
-def generate_uniform_distribution(segment_data, location, threshold_1, threshold_2, maximum):
+def generate_plot_uniform_distribution(segment_data, location, lower_bound, upper_bound, maximum):
     """
     Plot de uniforme verdeling voor een segment.
 
@@ -108,14 +108,7 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
         threshold_1 (float): Drempelwaarde 1.
         threshold_2 (float): Drempelwaarde 2.
         maximum (int): Maximale waarde voor de x-as.
-
-    Returns:
-        lower_bound (float): Lower bound of the uniform distribution.
-        upper_bound (float): Upper bound of the uniform distribution.
     """
-    # Calculate lower and upper bounds
-    lower_bound = segment_data.min()
-    upper_bound = segment_data.max()
 
     # Fit uniform distribution to the segment data
     mean_norm, std_norm = stats.uniform.fit(segment_data)
@@ -135,15 +128,13 @@ def generate_uniform_distribution(segment_data, location, threshold_1, threshold
     plt.plot(x_norm, p_norm, 'k', linewidth=2, label='Uniforme verdeling')
 
     # Set plot title and labels
-    plt.title(f"{threshold_1} <= {location} Productie < {threshold_2} (Uniforme verdeling)")
+    plt.title(f"{lower_bound} <= {location} Productie < {upper_bound} (Uniforme verdeling)")
     plt.xlabel('Productie')
     plt.ylabel('Dichtheid')
     plt.legend()
 
-    return lower_bound, upper_bound
 
-
-def generate_normal_distribution(segment_data, location, threshold_2, maximum):
+def generate_plot_normal_distribution(segment_data, location, threshold_2, maximum, mean_norm, std_norm):
     """
     Genereer de normale verdeling voor een segment.
 
@@ -155,8 +146,6 @@ def generate_normal_distribution(segment_data, location, threshold_2, maximum):
     Returns:
         None
     """
-    # Fit normale verdeling aan de segmentgegevens
-    mean_norm, std_norm = stats.norm.fit(segment_data)
 
     # Histogram plot voor het segment
     plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
@@ -178,10 +167,8 @@ def generate_normal_distribution(segment_data, location, threshold_2, maximum):
     plt.ylabel('Dichtheid')
     plt.legend()
 
-    return mean_norm, std_norm
 
-
-def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
+def generate_plot_cauchy_distribution(segment_data, location, threshold_2, maximum, loc, scale):
     """
     Genereer de Cauchy-verdeling voor een segment.
 
@@ -191,8 +178,6 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
     Returns:
         None
     """
-    # Fit de Cauchy-verdeling aan de segmentgegevens
-    loc, scale = cauchy.fit(segment_data)
 
     # Histogram plot voor de segmentgegevens
     plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
@@ -214,11 +199,9 @@ def generate_cauchy_distribution(segment_data, location, threshold_2, maximum):
     plt.ylabel('Dichtheid')
     plt.legend()
 
-    return loc, scale
 
-
-def plot_segment_distributions(segment_1, distribution_1, segment_2, distribution_2, segment_3, distribution_3,
-                               location, threshold_1, threshold_2, combined_df_cleaned, maximum):
+def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, distribution, param1_s3,
+                               param2_s3, location, threshold_1, threshold_2, maximum):
     """
     Plot distributiesegmenten voor een bepaalde locatie.
 
@@ -240,19 +223,37 @@ def plot_segment_distributions(segment_1, distribution_1, segment_2, distributio
 
     # Segment 1
     plt.subplot(1, 3, 1)
-    distribution_1(segment_1['production'], location, threshold_1, maximum)
+    generate_plot_point_distribution(segment_1['production'], location, threshold_1, maximum)
 
     # Segment 2
     plt.subplot(1, 3, 2)
-    distribution_2(segment_2['production'], location, threshold_1, threshold_2, maximum)
+    generate_plot_uniform_distribution(segment_2['production'], location, lower_bound, upper_bound, maximum)
 
     # Segment 3
     plt.subplot(1, 3, 3)
-    distribution_3(segment_3['production'], location, threshold_2, maximum)
+    if distribution == "normal":
+        generate_plot_normal_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
+    elif distribution == "cauchy":
+        generate_plot_cauchy_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
 
     # Toon het geheel
     plt.subplots_adjust(wspace=0.2)
     plt.show()
+
+
+def plot_histogram(ax, simulated_data, n_days, location):
+    # Compute num_values
+    num_values = round(10 ** 4 / np.sqrt(n_days)) * 10 ** 3
+
+    # Calculate the number of bins
+    num_bins = int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10)))
+
+    ax.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
+    ax.set_xlabel(f"Productie voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
+    ax.set_ylabel('Density')
+    ax.set_title(
+        f"Density plot van ca. $10^{int(np.floor(np.log10(num_values)))}$ random\n waarden voor {location} ({n_days}"
+        f" {'dag' if n_days == 1 else 'dagen'})")
 
 
 def line_chart_daily_production(data, location, chart_title):

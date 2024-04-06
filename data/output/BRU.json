@@ -1,0 +1,1 @@
+{"BRU": {"threshold_1": 1e-08, "threshold_2": 750, "share_1": 0.1774, "share_2": 0.0213, "share_3": 0.8013, "lower_bound_s2": 348, "upper_bound_s2": 743, "distribution": "normal", "param1_s3": 999.9705248023005, "param2_s3": 85.99802629068185}}

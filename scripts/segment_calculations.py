@@ -1,3 +1,7 @@
+import json
+from scipy.stats import norm, cauchy
+
+
 def create_segments(location, threshold_1, threshold_2, df):
     """
     Maak segmenten op basis van locatie en productie drempelwaarden.
@@ -58,3 +62,51 @@ def print_segment_share(location, threshold_1, threshold_2, share_1, share_2, sh
     print(f"{location}: % dagen met [productie < {threshold_1}]:", share_1, '%')
     print(f"{location}: % dagen met [{threshold_1} <= productie < {threshold_2}]:", share_2, '%')
     print(f"{location}: % dagen met [productie >= {threshold_2}]:", share_3, '%')
+
+
+def calculate_and_save_segments_values(location, threshold_1, threshold_2, share_1, segment_2, segment_3,
+                                       share_2, share_3, distribution, filename):
+    """
+    Calculate segment values for Segment 2 and Segment 3 and save them to a JSON file.
+
+    Parameters:
+        location (str): The location for which the parameters are calculated.
+        threshold_1 (float): Threshold value 1.
+        threshold_2 (float): Threshold value 2.
+        segment_2 (DataFrame): Data for Segment 2.
+        segment_3 (DataFrame): Data for Segment 3.
+        distribution (str): Type of distribution to calculate parameters for ("normal" or "cauchy").
+        filename (str): The filename to save the results to.
+
+    Returns:
+        results (dict): Dictionary containing calculated parameters for each segment and distribution.
+    """
+
+    # Calculate segment values
+    results = {}
+    lower_bound_s2 = segment_2['production'].min()
+    upper_bound_s2 = segment_2['production'].max()
+
+    if distribution == "normal":
+        param1_s3, param2_s3 = norm.fit(segment_3['production'])
+    elif distribution == "cauchy":
+        param1_s3, param2_s3 = cauchy.fit(segment_3['production'])
+
+    results[location] = {
+        'threshold_1': threshold_1,
+        'threshold_2': threshold_2,
+        'share_1': round(share_1 / 100,4),
+        'share_2': round(share_2 / 100,4),
+        'share_3': round(share_3 / 100,4),
+        'lower_bound_s2': lower_bound_s2,
+        'upper_bound_s2': upper_bound_s2,
+        'distribution': distribution,
+        'param1_s3': param1_s3,
+        'param2_s3': param2_s3
+    }
+
+    # Save results to a JSON file
+    with open(filename, 'w') as json_file:
+        json.dump(results, json_file)
+
+    return results
