@@ -243,7 +243,7 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
 
 def plot_histogram(ax, simulated_data, n_days, location):
     # Compute num_values
-    num_values = round(10 ** 6 / np.sqrt(n_days)) * 10 ** 3
+    num_values = round(10 ** 6 / np.sqrt(n_days))
 
     # Calculate the number of bins (bepaald via trial & error)
     num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
