@@ -65,7 +65,7 @@ def print_segment_share(location, threshold_1, threshold_2, share_1, share_2, sh
 
 
 def calculate_and_save_segments_values(location, threshold_1, threshold_2, share_1, segment_2, segment_3,
-                                       share_2, share_3, distribution, filename):
+                                       share_2, share_3, filename):
     """
     Calculate segment values for Segment 2 and Segment 3 and save them to a JSON file.
 
@@ -75,7 +75,6 @@ def calculate_and_save_segments_values(location, threshold_1, threshold_2, share
         threshold_2 (float): Threshold value 2.
         segment_2 (DataFrame): Data for Segment 2.
         segment_3 (DataFrame): Data for Segment 3.
-        distribution (str): Type of distribution to calculate parameters for ("normal" or "cauchy").
         filename (str): The filename to save the results to.
 
     Returns:
@@ -87,10 +86,7 @@ def calculate_and_save_segments_values(location, threshold_1, threshold_2, share
     lower_bound_s2 = segment_2['production'].min()
     upper_bound_s2 = segment_2['production'].max()
 
-    if distribution == "normal":
-        param1_s3, param2_s3 = norm.fit(segment_3['production'])
-    elif distribution == "cauchy":
-        param1_s3, param2_s3 = cauchy.fit(segment_3['production'])
+    param1_s3, param2_s3 = norm.fit(segment_3['production'])
 
     results[location] = {
         'threshold_1': threshold_1,
@@ -100,7 +96,6 @@ def calculate_and_save_segments_values(location, threshold_1, threshold_2, share
         'share_3': share_3,
         'lower_bound_s2': lower_bound_s2,
         'upper_bound_s2': upper_bound_s2,
-        'distribution': distribution,
         'param1_s3': param1_s3,
         'param2_s3': param2_s3
     }
