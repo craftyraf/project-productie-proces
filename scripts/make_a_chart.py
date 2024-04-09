@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
-from scipy.stats import cauchy
 
 def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     """
@@ -168,37 +167,6 @@ def generate_plot_normal_distribution(segment_data, location, threshold_2, maxim
     plt.legend()
 
 
-def generate_plot_cauchy_distribution(segment_data, location, threshold_2, maximum, loc, scale):
-    """
-    Genereer de Cauchy-verdeling voor een segment.
-
-    Parameters:
-        segment_data (DataFrame): Gegevens voor het segment.
-
-    Returns:
-        None
-    """
-
-    # Histogram plot voor de segmentgegevens
-    plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
-
-    # Bepaal de x-limieten van de plot
-    xmin, xmax = plt.xlim()
-    plt.xlim(xmin=0, xmax=maximum)
-
-    # Genereer punten voor de Cauchy-verdeling
-    x = np.linspace(xmin, xmax, 100)
-    p = cauchy.pdf(x, loc=loc, scale=scale)
-
-    # Plot de Cauchy-verdeling
-    plt.plot(x, p, 'k', linewidth=2, label='Cauchy verdeling')
-
-    # Stel titel en labels in voor de plot
-    plt.title(f"{location} Productie >= {threshold_2} (Cauchy verdeling)")
-    plt.xlabel('Productie')
-    plt.ylabel('Dichtheid')
-    plt.legend()
-
 
 def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, distribution, param1_s3,
                                param2_s3, location, threshold_1, threshold_2, maximum):
@@ -231,10 +199,7 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
 
     # Segment 3
     plt.subplot(1, 3, 3)
-    if distribution == "normal":
-        generate_plot_normal_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
-    elif distribution == "cauchy":
-        generate_plot_cauchy_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
+    generate_plot_normal_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
 
     # Toon het geheel
     plt.subplots_adjust(wspace=0.2)

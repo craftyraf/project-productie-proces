@@ -1,6 +1,5 @@
 import json
-from scipy.stats import norm, cauchy
-
+from scipy.stats import norm
 
 def create_segments(location, threshold_1, threshold_2, df):
     """
