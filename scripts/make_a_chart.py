@@ -168,7 +168,7 @@ def generate_plot_normal_distribution(segment_data, location, threshold_2, maxim
 
 
 
-def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, distribution, param1_s3,
+def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, param1_s3,
                                param2_s3, location, threshold_1, threshold_2, maximum):
     """
     Plot distributiesegmenten voor een bepaalde locatie.
