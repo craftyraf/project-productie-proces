@@ -206,7 +206,7 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
     plt.show()
 
 
-def plot_histogram(ax, simulated_data, n_days, location):
+def plot_multiple_histograms(ax, simulated_data, n_days, location):
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
@@ -219,6 +219,15 @@ def plot_histogram(ax, simulated_data, n_days, location):
     ax.set_title(
         f"Density plot van ca. $10^{int(np.floor(np.log10(num_values)))}$ random\n waarden voor {location} ({n_days}"
         f" {'dag' if n_days == 1 else 'dagen'})")
+
+def plot_histogram(simulated_data, n_days, location):
+    # Compute num_values
+    num_values = round(10 ** 6 / np.sqrt(n_days))
+
+    # Calculate the number of bins (bepaald via trial & error)
+    num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
+
+    plt.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
 
 
 def plot_cdf(ax, simulated_data, n_days, location):
