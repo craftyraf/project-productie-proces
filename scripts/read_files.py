@@ -5,15 +5,15 @@ import json
 
 def read_json_files(directory_path, location):
     """
-    Functie om JSON-bestanden te lezen en DataFrame te maken
+    Function to read JSON files and create DataFrame
 
     Args:
-        directory_path (str): Het pad naar de map met JSON-bestanden.
-        location (str): De naam van de locatie om toe te voegen aan de 'location' kolom.
+        directory_path (str): The path to the folder containing JSON files.
+        location (str): The name of the location to add to the 'location' column.
 
     Returns:
-        pandas.DataFrame: Een DataFrame dat alle gegevens uit de JSON-bestanden bevat,
-                          met een extra kolom 'location'.
+        pandas.DataFrame: A DataFrame that contains all the data from the JSON files,
+                          with an extra column 'location'.
     """
     dataframes = []
     for filename in os.listdir(directory_path):
@@ -22,6 +22,6 @@ def read_json_files(directory_path, location):
             with open(full_path, 'r') as f:
                 json_data = json.load(f)
                 df = pd.DataFrame([json_data])
-                df['location'] = location  # Voeg 'location' kolom toe met locatienaam
+                df['location'] = location  # Add 'location' column
                 dataframes.append(df)
     return pd.concat(dataframes, ignore_index=True)

@@ -3,31 +3,31 @@ from scipy.stats import norm
 
 def create_segments(location, threshold_1, threshold_2, df):
     """
-    Maak segmenten op basis van locatie en productie drempelwaarden.
+    Create segments based on the location and production tresholds.
 
     Parameters:
-        location (str): De locatiewaarde.
-        threshold_1 (float): De eerste productiedrempel.
-        threshold_2 (float): De tweede productiedrempel.
-        df (DataFrame): De DataFrame met de gegevens.
+        location (str): The location value
+        threshold_1 (float): The first production treshold.
+        threshold_2 (float): The second production treshold
+        df (DataFrame): The DataFrame with the data
 
     Returns:
-        tuple: Een tuple met drie DataFrame segmenten.
+        tuple: A tuple with 3 dataframe segments.
     """
-    # Segment 1: Geen onderhoud en productie < threshold_1 voor de opgegeven locatie
+    # Segment 1: No maintenance and production < threshold_1 for the given location
     segment_1 = df[
         (df['location'] == location) &
         (df['production'] < threshold_1)
         ]
 
-    # Segment 2: Geen onderhoud, threshold 1 <= productie < threshold_2 voor de opgegeven locatie
+    # Segment 2: No maintenance, threshold 1 <= productie < threshold_2 for the given location
     segment_2 = df[
         (df['location'] == location) &
         (df['production'] >= threshold_1) &
         (df['production'] < threshold_2)
         ]
 
-    # Segment 3: Geen onderhoud en productie >= threshold_2 voor de opgegeven locatie
+    # Segment 3: No maintenance and production >= threshold_2 for the given location
     segment_3 = df[
         (df['location'] == location) &
         (df['production'] >= threshold_2)
@@ -58,9 +58,9 @@ def print_segment_share(location, threshold_1, threshold_2, share_1, share_2, sh
     Returns:
         None
     """
-    print(f"{location}: % dagen met [productie < {threshold_1}]:", round(100 * share_1,2), '%')
-    print(f"{location}: % dagen met [{threshold_1} <= productie < {threshold_2}]:", round(100 * share_2,2), '%')
-    print(f"{location}: % dagen met [productie >= {threshold_2}]:", round(100 * share_3,2), '%')
+    print(f"{location}: % days with [production < {threshold_1}]:", round(100 * share_1,2), '%')
+    print(f"{location}: % days with [{threshold_1} <= production < {threshold_2}]:", round(100 * share_2,2), '%')
+    print(f"{location}: % days with [production >= {threshold_2}]:", round(100 * share_3,2), '%')
 
 
 def calculate_and_save_segments_values(location, threshold_1, threshold_2, share_1, segment_2, segment_3,

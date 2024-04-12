@@ -36,9 +36,9 @@ def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     plt.show()
 
 
-# Berekening van ECDF
+# ECDF calculation
 def ecdf(data):
-    """Bereken ECDF voor een 1D array van data."""
+    """Calculate ECDF for a 1D array."""
     n = len(data)
     x = np.sort(data)
     y = np.arange(1, n + 1) / n
@@ -72,12 +72,12 @@ def calculate_maximum(combined_df_cleaned, location):
 
 def generate_plot_point_distribution(segment_data, location, threshold_1, maximum):
     """
-    Plot de puntverdeling voor een segment.
+    Plot the point distribution for a segment.
 
     Parameters:
-        segment_data (DataFrame): Gegevens voor het segment.
-        location (str): De locatienaam.
-        threshold_1 (float): Drempelwaarde 1.
+        segment_data (DataFrame): Data for the segment.
+        location (str): The location name.
+        threshold_1 (float): Threshold value 1.
 
     Returns:
         None
@@ -92,21 +92,21 @@ def generate_plot_point_distribution(segment_data, location, threshold_1, maximu
     plt.hist(segment_data, bins=1, density=True, alpha=0.6, width=width)
 
     # Set plot title and labels
-    plt.title(f"{location} Productie < {threshold_1} (Puntwaarde)")
-    plt.xlabel('Productie')
-    plt.ylabel('Dichtheid')
+    plt.title(f"{location} Production < {threshold_1} (Point value)")
+    plt.xlabel('Production')
+    plt.ylabel('Density')
 
 
 def generate_plot_uniform_distribution(segment_data, location, lower_bound, upper_bound, maximum):
     """
-    Plot de uniforme verdeling voor een segment.
+    Plot the uniform distribution for a segment.
 
     Parameters:
-        segment_data (DataFrame): Data voor het segment.
-        location (str): De locatienaam.
-        threshold_1 (float): Drempelwaarde 1.
-        threshold_2 (float): Drempelwaarde 2.
-        maximum (int): Maximale waarde voor de x-as.
+        segment_data (DataFrame): Data for the segment.
+        location (str): The location name.
+        threshold_1 (float): Threshold value 1.
+        threshold_2 (float): Threshold value 2.
+        maximum (int): Maximum value for the x-axis.
     """
 
     # Fit uniform distribution to the segment data
@@ -127,66 +127,65 @@ def generate_plot_uniform_distribution(segment_data, location, lower_bound, uppe
     plt.plot(x_norm, p_norm, 'k', linewidth=2, label='Uniforme verdeling')
 
     # Set plot title and labels
-    plt.title(f"{lower_bound} <= {location} Productie < {upper_bound} (Uniforme verdeling)")
-    plt.xlabel('Productie')
-    plt.ylabel('Dichtheid')
+    plt.title(f"{lower_bound} <= {location} Production < {upper_bound} (Uniform Distribution)")
+    plt.xlabel('Production')
+    plt.ylabel('Density')
     plt.legend()
 
 
 def generate_plot_normal_distribution(segment_data, location, threshold_2, maximum, mean_norm, std_norm):
     """
-    Genereer de normale verdeling voor een segment.
+    Generate the normal distribution for a segment.
 
     Parameters:
-        segment_data (DataFrame): Gegevens voor het segment.
-        location (str): De locatienaam.
-        threshold_2 (float): Drempelwaarde 2.
+        segment_data (DataFrame): Data for the segment.
+        location (str): The location name.
+        threshold_2 (float): Threshold value 2.
 
     Returns:
         None
     """
 
-    # Histogram plot voor het segment
+    # Histogram plot for the segment
     plt.hist(segment_data, bins=50, density=True, alpha=0.6, label='Histogram')
 
-    # Stel x-as limieten in
+    # Set x-axis limits
     xmin, xmax = plt.xlim()
     plt.xlim(xmin=0, xmax=maximum)
 
-    # Genereer punten voor de normale verdeling
+    # Generate points for the normal distribution
     x_norm = np.linspace(xmin, xmax, 100)
     p_norm = stats.norm.pdf(x_norm, mean_norm, std_norm)
 
-    # Plot normale verdeling
-    plt.plot(x_norm, p_norm, 'k', linewidth=2, label='Normaalverdeling')
+    # Plot normal distribution
+    plt.plot(x_norm, p_norm, 'k', linewidth=2, label='Normal distribution')
 
-    # Stel plot titel en labels in
-    plt.title(f"{location} Productie >= {threshold_2} (Normaalverdeling)")
-    plt.xlabel('Productie')
-    plt.ylabel('Dichtheid')
+    # Set plot title and labels
+    plt.title(f"{location} Production >= {threshold_2} (Normal distribution)")
+    plt.xlabel('Production')
+    plt.ylabel('Density')
     plt.legend()
-
 
 
 def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, param1_s3,
                                param2_s3, location, threshold_1, threshold_2, maximum):
     """
-    Plot distributiesegmenten voor een bepaalde locatie.
+    Plot distribution segments for a given location.
 
     Parameters:
-        segment_1 (DataFrame): DataFrame met gegevens voor segment 1.
-        segment_2 (DataFrame): DataFrame met gegevens voor segment 2.
-        segment_3 (DataFrame): DataFrame met gegevens voor segment 3.
-        locatie (str): De locatie waarvoor distributies worden geplot.
-        drempel_1 (float): Drempelwaarde tussen segmenten 1 en 2.
-        drempel_2 (float): Drempelwaarde tussen segmenten 2 en 3.
-        gecombineerd_df_schoongemaakt (DataFrame): DataFrame met alle schone gegevens.
-        verdeling_1 (callable): Functie voor het genereren van distributie in segment 1.
-        verdeling_2 (callable): Functie voor het genereren van distributie in segment 2.
-        verdeling_3 (callable): Functie voor het genereren van distributie in segment 3.
-    """
+        segment_1 (DataFrame): DataFrame containing data for segment 1.
+        segment_2 (DataFrame): DataFrame containing data for segment 2.
+        segment_3 (DataFrame): DataFrame containing data for segment 3.
+        location (str): The location for which distributions are plotted.
+        threshold_1 (float): Threshold value between segments 1 and 2.
+        threshold_2 (float): Threshold value between segments 2 and 3.
+        combined_df_cleaned (DataFrame): DataFrame containing all clean data.
+        distribution_1 (callable): Function to generate distribution in segment 1.
+        distribution_2 (callable): Function to generate distribution in segment 2.
+        distribution_3 (callable): Function to generate distribution in segment 3.
 
-    # Maak een grafiek voor elk segment
+    """
+    # Create a graph for each segment
     plt.subplots(1, 3, figsize=(25, 4), gridspec_kw={'width_ratios': [4, 4, 4]})
 
     # Segment 1
@@ -201,7 +200,7 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
     plt.subplot(1, 3, 3)
     generate_plot_normal_distribution(segment_3['production'], location, threshold_2, maximum, param1_s3, param2_s3)
 
-    # Toon het geheel
+    # Show the whole
     plt.subplots_adjust(wspace=0.2)
     plt.show()
 
@@ -210,7 +209,7 @@ def plot_histogram(simulated_data, n_days, location):
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
-    # Calculate the number of bins (bepaald via trial & error)
+    # Calculate the number of bins (determined by trial & error)
     num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
 
     plt.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
@@ -220,40 +219,40 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
-    # Calculate the number of bins (bepaald via trial & error)
+    # Calculate the number of bins (determined by trial & error)
     num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
 
     ax.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
-    ax.set_xlabel(f"Productie voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
+    ax.set_xlabel(f"Production for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
     ax.set_ylabel('Density')
     ax.set_title(
-        f"Density plot van ca. $10^{int(np.floor(np.log10(num_values)))}$ random\n waarden voor {location} ({n_days}"
-        f" {'dag' if n_days == 1 else 'dagen'})")
+        f"Density plot of $10^{int(np.floor(np.log10(num_values)))}$ random\n values for {location} ({n_days}"
+        f" {'day' if n_days == 1 else 'days'})")
 
 
 def plot_cdf(ax, simulated_data, n_days, location):
-    # Sorteer dataset
+    # Sort dataset
     sorted_data = np.sort(simulated_data)
 
-    # Bereken y-waarden
+    # Calculate y values
     n = len(simulated_data)
     y_values = np.arange(1, n + 1) / n
 
     # Plot the CDF
-    ax.plot(sorted_data, y_values, label=f"Empirische Cumulatieve Distributiefunctie ({n_days}"
-                                         f" {'dag' if n_days == 1 else 'dagen'})")
+    ax.plot(sorted_data, y_values, label=f"Empirical Cumulative Distribution Function ({n_days}"
+                                         f" {'day' if n_days == 1 else 'days'})")
 
     # Set labels and title
-    ax.set_xlabel(f"Productie voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
-    ax.set_ylabel('Cumulatieve kans')
-    ax.set_title(f"Cumulatieve kans voor {location} ({n_days} {'dag' if n_days == 1 else 'dagen'})")
+    ax.set_xlabel(f"Production for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
+    ax.set_ylabel('Cumulative probability')
+    ax.set_title(f"Cumulative probability for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
     ax.legend()
 
 
 def line_chart_daily_production(data, location, chart_title):
     plt.plot(data, marker='o')
     plt.title(f"{location} {chart_title}")
-    plt.xlabel('Dag')
-    plt.ylabel('Productie')
+    plt.xlabel('Day')
+    plt.ylabel('Production')
     plt.grid(True)
     plt.show()
