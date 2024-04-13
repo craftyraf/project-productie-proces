@@ -24,4 +24,5 @@ def simulate(share_1, share_2, lower_bound_s2, upper_bound_s2, param1_s3, param2
                 random_value = np.random.normal(param1_s3, param2_s3)
             random_sum += random_value
         all_random_sums.append(random_sum)
+
     return all_random_sums

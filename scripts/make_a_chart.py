@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
+from scipy.stats import norm
 
 def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     """
@@ -218,6 +219,14 @@ def plot_histogram(simulated_data, n_days, location):
 
     plt.hist(simulated_data, bins=num_bins, density=True, alpha=0.7)
 
+    plt.xlabel(f"Production for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
+    plt.ylabel('Density')
+    plt.title(
+         f"Density plot for {location} ({n_days}"
+         f" {'day' if n_days == 1 else 'days'})")
+    plt.tight_layout()
+    plt.show()
+
 
 def plot_multiple_histograms(ax, simulated_data, n_days, location):
     """
@@ -238,7 +247,7 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
         f" {'day' if n_days == 1 else 'days'})")
 
 
-def plot_cdf(ax, simulated_data, n_days, location):
+def plot_cdf(ax, simulated_data, n_days, location, include_clt=False):
     """
     Generate a Cumulative Distribution Function line chart for a given location and amount of days.
 
@@ -260,3 +269,11 @@ def plot_cdf(ax, simulated_data, n_days, location):
     ax.set_title(f"Cumulative probability for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
     ax.legend()
 
+    if include_clt:
+        # Add CLT line to CDF plot
+        mean_simulated = np.mean(simulated_data)
+        std_simulated = np.std(simulated_data)
+        x_values = np.linspace(min(simulated_data), max(simulated_data), 100)
+        y_values = norm.cdf(x_values, mean_simulated, std_simulated)
+        ax.plot(x_values, y_values, label='Central Limit Theorem', color='red', linestyle='--')
+        ax.legend(loc='upper left')
