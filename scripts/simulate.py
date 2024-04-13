@@ -4,6 +4,11 @@ import numpy as np
 def simulate(share_1, share_2, lower_bound_s2, upper_bound_s2, param1_s3, param2_s3,
              n_days):
 
+    """
+    Simulate production process for three production segments, and for a given amount of days.
+    The production segments are defined by an upper bound and a lower bound and the respectively shares.
+    """
+
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
     all_random_sums = []

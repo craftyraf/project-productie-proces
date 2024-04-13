@@ -206,6 +206,10 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
 
 
 def plot_histogram(simulated_data, n_days, location):
+    """
+    Generate a histogram of production or simulation data for a given location.
+
+    """
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
@@ -216,6 +220,10 @@ def plot_histogram(simulated_data, n_days, location):
 
 
 def plot_multiple_histograms(ax, simulated_data, n_days, location):
+    """
+    Generate multiple histograms of production or simulation data for a given location.
+
+    """
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
@@ -231,6 +239,10 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
 
 
 def plot_cdf(ax, simulated_data, n_days, location):
+    """
+    Generate a Cumulative Distribution Function line chart for a given location and amount of days.
+
+    """
     # Sort dataset
     sorted_data = np.sort(simulated_data)
 
@@ -248,11 +260,3 @@ def plot_cdf(ax, simulated_data, n_days, location):
     ax.set_title(f"Cumulative probability for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
     ax.legend()
 
-
-def line_chart_daily_production(data, location, chart_title):
-    plt.plot(data, marker='o')
-    plt.title(f"{location} {chart_title}")
-    plt.xlabel('Day')
-    plt.ylabel('Production')
-    plt.grid(True)
-    plt.show()

@@ -1,5 +1,10 @@
 import numpy as np
 
+"""
+Map fuel_type to a categorization of a select number of values.
+
+"""
+
 fuel_mapping = {
     'Gasoline': 'Gasoline',
     'Hybrid': 'Hybrid',
@@ -38,5 +43,5 @@ fuel_mapping = {
     'Gas/Electric Hybrid': 'Hybrid',
     'Flex Fuel': 'Gasoline',
     'Plug-In Electric/Gas': 'Hybrid',
-    'Electric': 'Electric',
+    'Electric': 'Electric'
 }
