@@ -3,13 +3,13 @@ import numpy as np
 import scipy.stats as stats
 from scipy.stats import norm
 
+
 def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     """
-    Create a horizontal bar chart for the specified column in the DataFrame, with customizable title and labels.
+    Create a horizontal bar chart with customizable title and labels.
 
     Parameters:
-    - df: pandas DataFrame containing the data.
-    - column_name: string, the name of the column for which to create the bar chart.
+    - value_counts: pandas Series containing the values and their counts for the bar chart.
     - chart_title: string, the title of the chart.
     - x_label: string, the label for the x-axis.
     - y_label: string, the label for the y-axis.
@@ -37,13 +37,72 @@ def horizontal_bar_chart(value_counts, chart_title, x_label, y_label):
     plt.show()
 
 
-# ECDF calculation
-def ecdf(data):
-    """Calculate ECDF for a 1D array."""
+def generate_plot_ecdf(data,
+                       median_price=None,
+                       avg_price=None,
+                       title="Distribution and ECDF",
+                       xlabel="Price",
+                       ylabel="Probability",
+                       bins=30):
+    """
+    Calculate and plot the Empirical Cumulative Distribution Function (ECDF) for a 1D array of data.
+
+    Parameters:
+    - data: array-like, the 1D array containing the data for which to calculate the ECDF.
+    - median_price: float, optional, the median price to mark on the plot (vertical line).
+    - avg_price: float, optional, the average price to mark on the plot (vertical line).
+    - title: string, optional, the title of the plot.
+    - xlabel: string, optional, the label for the x-axis.
+    - ylabel: string, optional, the label for the y-axis.
+    - bins: int, optional, the number of bins for the histogram.
+
+    Displays a plot showing the histogram and ECDF of the data, with optional vertical lines
+    marking the median and average prices.
+    """
+
     n = len(data)
     x = np.sort(data)
     y = np.arange(1, n + 1) / n
-    return x, y
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.hist(data,
+            bins=bins,
+            color='skyblue',
+            edgecolor='black',
+            cumulative=True,
+            density=True,
+            alpha=0.5,
+            label='Histogram')
+    ax.plot(x,
+            y,
+            marker='.',
+            linestyle='none',
+            color='blue',
+            label='ECDF')
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend()
+
+    # Add vertical lines for median and average if provided
+    if median_price is not None:
+        ax.axvline(median_price,
+                   color='red',
+                   linestyle='solid',
+                   linewidth=2,
+                   label='Median')
+    if avg_price is not None:
+        ax.axvline(avg_price,
+                   color='purple',
+                   linestyle='solid',
+                   linewidth=2,
+                   label='Average')
+
+    # Delete lines top and right
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    plt.show()
 
 
 def calculate_maximum(combined_df_cleaned, location):
@@ -77,11 +136,9 @@ def generate_plot_point_distribution(segment_data, location, threshold_1, maximu
 
     Parameters:
         segment_data (DataFrame): Data for the segment.
-        location (str): The location name.
-        threshold_1 (float): Threshold value 1.
-
-    Returns:
-        None
+        location (str): The name of the location.
+        threshold_1 (float): The threshold value for categorizing points.
+        maximum (int): The maximum value for the x-axis.
     """
 
     # Set histogram parameters
@@ -105,9 +162,15 @@ def generate_plot_uniform_distribution(segment_data, location, lower_bound, uppe
     Parameters:
         segment_data (DataFrame): Data for the segment.
         location (str): The location name.
-        threshold_1 (float): Threshold value 1.
-        threshold_2 (float): Threshold value 2.
-        maximum (int): Maximum value for the x-axis.
+        lower_bound (float): The lower bound threshold value.
+        upper_bound (float): The upper bound threshold value.
+        maximum (int): The maximum value for the x-axis.
+
+    This function plots the uniform distribution for a given segment using a histogram.
+    It fits a uniform distribution to the segment data and overlays it on the histogram.
+    The x-axis limits are set based on the maximum value provided.
+    The plot title indicates the location and the range specified by the lower and upper bound
+    threshold values, and labels the axes accordingly.
     """
 
     # Fit uniform distribution to the segment data
@@ -142,9 +205,14 @@ def generate_plot_normal_distribution(segment_data, location, threshold_2, maxim
         segment_data (DataFrame): Data for the segment.
         location (str): The location name.
         threshold_2 (float): Threshold value 2.
+        maximum (int): The maximum value for the x-axis.
+        mean_norm (float): The mean of the normal distribution.
+        std_norm (float): The standard deviation of the normal distribution.
 
-    Returns:
-        None
+    This function generates and plots the normal distribution for a given segment using a histogram.
+    It overlays the normal distribution curve on the histogram based on the provided mean and standard deviation.
+    The x-axis limits are set based on the maximum value provided.
+    The plot title indicates the location and the threshold value, and labels the axes accordingly.
     """
 
     # Histogram plot for the segment
@@ -168,8 +236,11 @@ def generate_plot_normal_distribution(segment_data, location, threshold_2, maxim
     plt.legend()
 
 
-def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, segment_3, param1_s3,
-                               param2_s3, location, threshold_1, threshold_2, maximum):
+def plot_segment_distributions(segment_1,
+                               segment_2, lower_bound, upper_bound,
+                               segment_3, param1_s3, param2_s3,
+                               location,
+                               threshold_1, threshold_2, maximum):
     """
     Plot distribution segments for a given location.
 
@@ -180,12 +251,14 @@ def plot_segment_distributions(segment_1, segment_2, lower_bound, upper_bound, s
         location (str): The location for which distributions are plotted.
         threshold_1 (float): Threshold value between segments 1 and 2.
         threshold_2 (float): Threshold value between segments 2 and 3.
-        combined_df_cleaned (DataFrame): DataFrame containing all clean data.
-        distribution_1 (callable): Function to generate distribution in segment 1.
-        distribution_2 (callable): Function to generate distribution in segment 2.
-        distribution_3 (callable): Function to generate distribution in segment 3.
+        maximum (int): The maximum value for the x-axis.
 
+    This function plots distribution segments for a given location across three subplots.
+    Each subplot represents a segment, with its respective distribution plotted according to its type.
+    Segment 1 is plotted with a point distribution, Segment 2 with a uniform distribution, and Segment 3 with a normal distribution.
+    The title of each subplot indicates the location and the relevant threshold value, and the x-axis represents production.
     """
+
     # Create a graph for each segment
     plt.subplots(1, 3, figsize=(25, 4), gridspec_kw={'width_ratios': [4, 4, 4]})
 
@@ -210,9 +283,16 @@ def plot_histogram(simulated_data, n_days, location):
     """
     Generate a histogram of production or simulation data for a given location.
 
+    Parameters:
+        simulated_data (array-like): Array containing production or simulation data.
+        n_days (int): Number of days the data represents.
+        location (str): Name of the location for which the data is plotted.
+
+    This function generates a histogram of production or simulation data for a specified location.
+    The number of bins is calculated based on the range of the data and the number of days.
+    The x-axis represents production for the location over the specified number of days,
+    and the y-axis represents the density of the data.
     """
-    # Compute num_values
-    num_values = round(10 ** 6 / np.sqrt(n_days))
 
     # Calculate the number of bins (determined by trial & error)
     num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
@@ -232,7 +312,20 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
     """
     Generate multiple histograms of production or simulation data for a given location.
 
+    Parameters:
+        ax (matplotlib Axes): The Axes object to draw the histograms onto.
+        simulated_data (array-like): Array containing production or simulation data.
+        n_days (int): Number of days the data represents.
+        location (str): Name of the location for which the data is plotted.
+
+    This function generates multiple histograms of production or simulation data for a specified location.
+    The number of histograms is determined by the number of random values (`num_values`) computed based on the number of days.
+    The number of bins for each histogram is calculated based on the range of the data and the number of days.
+    Each histogram's x-axis represents production for the location over the specified number of days,
+    and the y-axis represents the density of the data.
+    The title of each histogram indicates the number of random values used and the location and number of days.
     """
+
     # Compute num_values
     num_values = round(10 ** 6 / np.sqrt(n_days))
 
@@ -249,9 +342,22 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
 
 def plot_cdf(ax, simulated_data, n_days, location, include_clt=False):
     """
-    Generate a Cumulative Distribution Function line chart for a given location and amount of days.
+    Generate a Cumulative Distribution Function (CDF) line chart for production or simulation data.
 
+    Parameters:
+        ax (matplotlib Axes): The Axes object to draw the CDF chart onto.
+        simulated_data (array-like): Array containing production or simulation data.
+        n_days (int): Number of days the data represents.
+        location (str): Name of the location for which the data is plotted.
+        include_clt (bool): Whether to include the Central Limit Theorem line on the plot. Default is False.
+
+    This function generates a Cumulative Distribution Function (CDF) line chart for a given location and number of days.
+    The data is sorted, and the CDF is computed based on the sorted data.
+    The x-axis represents production for the location over the specified number of days,
+    and the y-axis represents the cumulative probability.
+    If include_clt is True, the Central Limit Theorem (CLT) line is added to the plot.
     """
+
     # Sort dataset
     sorted_data = np.sort(simulated_data)
 

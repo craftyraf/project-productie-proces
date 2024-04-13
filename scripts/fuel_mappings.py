@@ -10,7 +10,6 @@ fuel_mapping = {
     'Hybrid': 'Hybrid',
     np.nan: 'Other',
     'Premium': 'Gasoline',
-    'Electric': 'Electric',
     'Gasoline/Mild Electric Hybrid': 'Hybrid',
     'Diesel': 'Gasoline',
     'E85 Flex Fuel': 'Gasoline',
