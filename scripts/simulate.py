@@ -3,6 +3,7 @@ import numpy as np
 
 def simulate(share_1, share_2, lower_bound_s2, upper_bound_s2, param1_s3, param2_s3,
              n_days):
+
     """
     Simulate production processes for three production segments over a specified number of days.
 
@@ -23,22 +24,21 @@ def simulate(share_1, share_2, lower_bound_s2, upper_bound_s2, param1_s3, param2
     For each simulated day, random values are generated according to the defined segments,
     and the total production for that day is calculated and appended to a list.
     The function returns a list containing the simulated production values for each simulated day.
+
+    Note:
+        This function utilizes vectorized operations for efficient random number generation.
     """
 
-    num_values = round(10 ** 6 / np.sqrt(n_days))
-
+    num_values = 10**5
+    random_numbers = np.random.random((num_values, n_days))
     all_random_sums = []
-    for _ in range(num_values):
-        random_sum = 0
-        for _ in range(n_days):
-            random_number = random.random()
-            if random_number < share_1:
-                random_value = 0
-            elif random_number < (share_1 + share_2):
-                random_value = np.random.uniform(lower_bound_s2, upper_bound_s2)
-            else:
-                random_value = np.random.normal(param1_s3, param2_s3)
-            random_sum += random_value
+
+    for i in range(num_values):
+        random_values = random_numbers[i]
+        random_sum = np.sum(np.where(random_values < share_1, 0,
+                                     np.where(random_values < (share_1 + share_2),
+                                              np.random.uniform(lower_bound_s2, upper_bound_s2, n_days),
+                                              np.random.normal(param1_s3, param2_s3, n_days))))
         all_random_sums.append(random_sum)
 
     return all_random_sums

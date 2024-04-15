@@ -326,9 +326,6 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
     The title of each histogram indicates the number of random values used and the location and number of days.
     """
 
-    # Compute num_values
-    num_values = round(10 ** 6 / np.sqrt(n_days))
-
     # Calculate the number of bins (determined by trial & error)
     num_bins = max(int((np.max(simulated_data) - np.min(simulated_data)) / (2 * (n_days + 10))),150)
 
@@ -336,7 +333,7 @@ def plot_multiple_histograms(ax, simulated_data, n_days, location):
     ax.set_xlabel(f"Production for {location} ({n_days} {'day' if n_days == 1 else 'days'})")
     ax.set_ylabel('Density')
     ax.set_title(
-        f"Density plot of $10^{int(np.floor(np.log10(num_values)))}$ random\n values for {location} ({n_days}"
+        f"Density plot of $10^5$ random values for {location} ({n_days}"
         f" {'day' if n_days == 1 else 'days'})")
 
 
