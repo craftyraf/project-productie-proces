@@ -11,6 +11,7 @@
 ### Run the notebooks to test the project
 - You can find the notebooks in the subfolder 'notebooks' of the project folder.
 - The notebooks use scripts from the folder 'scripts'.
+- In case you downloaded the project from Github, you still need to add data to the data/input folder.
 
 ### The scripts that are used by the notebook:
 - fuel_mappings.py is a script with a function to map a lot of fuel type categories to a few fuel type categories
